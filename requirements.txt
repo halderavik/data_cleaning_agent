@@ -1,0 +1,40 @@
+# Core Dependencies
+fastapi==0.109.2
+uvicorn==0.27.1
+sqlalchemy==2.0.27
+pydantic==2.6.1
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.9
+alembic==1.13.1
+bcrypt==4.0.1
+
+# Data Processing
+pandas==2.2.0
+numpy==1.26.3
+pyreadstat==1.2.0
+openpyxl==3.1.2
+
+# ML/AI Dependencies
+scikit-learn==1.4.0
+transformers==4.35.2
+sentence-transformers==2.2.2
+torch==2.1.1
+textblob==0.17.1
+spacy==3.7.2
+
+# Database
+psycopg2-binary==2.9.9
+redis==5.0.1
+
+# Testing
+pytest==8.0.0
+pytest-cov==4.1.0
+
+# Utilities
+python-dotenv==1.0.0
+requests==2.31.0
+aiofiles==23.2.1
+black==24.1.1
+isort==5.13.2
+mypy==1.8.0 
