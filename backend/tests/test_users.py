@@ -4,8 +4,8 @@ from sqlalchemy.orm import Session
 from datetime import datetime
 
 from main import app
-from models import User
-from security import get_password_hash, create_access_token
+from backend.models import User
+from backend.security import get_password_hash, create_access_token
 
 client = TestClient(app)
 

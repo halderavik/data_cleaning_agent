@@ -6,9 +6,9 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
-from database.base import get_db
-from models import User
-from schemas import TokenData
+from backend.database.base import get_db
+from backend.models import User
+from backend.schemas import TokenData
 
 # Security configuration
 SECRET_KEY = "your-secret-key-here"  # In production, use environment variable

@@ -3,10 +3,11 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from fastapi.testclient import TestClient
 
-from database.base import Base
+from backend.database.base import Base
 from main import app
-from models import User
-from security import get_password_hash
+from backend.models import User
+from backend.security import get_password_hash
+from backend.security import create_access_token
 
 # Test database URL
 TEST_DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/survey_cleaning_test"
@@ -64,11 +65,9 @@ def analyst_user(db):
 @pytest.fixture(scope="function")
 def admin_token(admin_user):
     """Create an admin access token."""
-    from security import create_access_token
     return create_access_token(data={"sub": admin_user.email})
 
 @pytest.fixture(scope="function")
 def analyst_token(analyst_user):
     """Create an analyst access token."""
-    from security import create_access_token
     return create_access_token(data={"sub": analyst_user.email}) 

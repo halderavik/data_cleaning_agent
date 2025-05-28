@@ -4,8 +4,8 @@ from sqlalchemy.orm import Session
 from datetime import datetime
 
 from main import app
-from models import User
-from security import get_password_hash
+from backend.models import User
+from backend.security import get_password_hash
 
 client = TestClient(app)
 

@@ -5,12 +5,12 @@ import pandas as pd
 from datetime import datetime
 from pydantic import BaseModel
 
-from ..database import get_db
+from backend.database.base import get_db
 from ..models import DataFile, CleaningResult, CleaningCheck
-from ..schemas import CleaningResultBase, CleaningResultUpdate, User
+from ..schemas import CleaningResultBase, CleaningResultUpdate
 from ..cleaning_engine import CleaningEngine
-from ..auth import get_current_user
-from ..security import get_current_user
+from backend.security import get_current_user
+from backend.models import User
 
 router = APIRouter(prefix="/api/v1/cleaning", tags=["cleaning"])
 

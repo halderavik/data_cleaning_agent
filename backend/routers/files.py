@@ -5,9 +5,9 @@ from fastapi.responses import JSONResponse
 from tempfile import NamedTemporaryFile
 from typing import Any
 
-from security import get_current_active_user
-from models import User
-from services.spss_processor import SPSSProcessor
+from backend.security import get_current_active_user
+from backend.models import User
+from backend.services.spss_processor import SPSSProcessor
 
 router = APIRouter(
     prefix="/files",

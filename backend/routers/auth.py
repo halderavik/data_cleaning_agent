@@ -3,10 +3,10 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
-from database.base import get_db
-from models import User
-from schemas import Token
-from security import (
+from backend.database.base import get_db
+from backend.models import User
+from backend.schemas import Token
+from backend.security import (
     verify_password,
     create_access_token,
     ACCESS_TOKEN_EXPIRE_MINUTES

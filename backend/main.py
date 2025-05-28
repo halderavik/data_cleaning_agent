@@ -1,10 +1,12 @@
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
+from sqlalchemy import text
 
-from database.base import get_db, engine
-from models import Base
-from routers import users, auth, projects, files, cleaning
+from backend.database.base import get_db, engine
+from backend.models import Base
+from backend.routers import users, auth, projects, files
+from backend.routes import cleaning
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
@@ -54,7 +56,7 @@ async def health_check(db: Session = Depends(get_db)):
     """
     try:
         # Try to execute a simple query
-        db.execute("SELECT 1")
+        db.execute(text("SELECT 1"))
         return {
             "status": "healthy",
             "database": "connected"

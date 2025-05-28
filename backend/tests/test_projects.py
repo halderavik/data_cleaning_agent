@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from datetime import datetime
 
 from main import app
-from models import Project
+from backend.models import Project
 
 client = TestClient(app)
 
