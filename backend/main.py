@@ -3,8 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 
-from backend.database.base import get_db, engine
-from backend.models import Base
+from backend.database.base import get_db, engine, Base
 from backend.routers import users, auth, projects, files
 from backend.routes import cleaning
 
@@ -30,7 +29,7 @@ app.add_middleware(
 app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
 app.include_router(users.router, prefix="/users", tags=["Users"])
 app.include_router(projects.router, prefix="/projects", tags=["Projects"])
-app.include_router(files.router, prefix="/files", tags=["Files"])
+app.include_router(files.router)
 app.include_router(cleaning.router, prefix="/cleaning", tags=["Cleaning"])
 
 @app.get("/")

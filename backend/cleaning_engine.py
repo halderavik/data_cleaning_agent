@@ -9,7 +9,7 @@ from sklearn.preprocessing import StandardScaler
 import uuid
 from concurrent.futures import ThreadPoolExecutor
 import logging
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 from enum import Enum
 
 # Configure logging
@@ -176,6 +176,16 @@ class CleaningEngine:
             }
         }
 
+    def _convert_enum_to_value(self, obj):
+        if isinstance(obj, dict):
+            return {k: self._convert_enum_to_value(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [self._convert_enum_to_value(i) for i in obj]
+        elif isinstance(obj, CheckSeverity):
+            return obj.value
+        else:
+            return obj
+
     def process_data(self, data: pd.DataFrame) -> Dict[str, Any]:
         """
         Process the dataset through all cleaning checks.
@@ -200,17 +210,20 @@ class CleaningEngine:
                 check_name = future_to_check[future]
                 try:
                     check_result = future.result()
-                    results[check_name] = check_result
+                    # Convert CheckResult dataclass to dict
+                    results[check_name] = asdict(check_result)
                 except Exception as e:
                     logger.error(f"Error in check {check_name}: {str(e)}")
                     results[check_name] = {
                         'status': 'failed',
                         'error': str(e),
                         'issues_found': 0,
-                        'severity': CheckSeverity.CRITICAL
+                        'severity': CheckSeverity.CRITICAL.value
                     }
         
         self.total_execution_time = (datetime.now() - start_time).total_seconds()
+        # Recursively convert all CheckSeverity enums to their string value
+        results = self._convert_enum_to_value(results)
         return self._generate_summary_report(results)
 
     def _run_check(self, check_name: str, check_info: Dict[str, Any], data: pd.DataFrame) -> CheckResult:
@@ -257,8 +270,8 @@ class CleaningEngine:
         failed_checks = sum(1 for result in results.values() if result.get('status') == 'failed')
         
         severity_counts = {
-            severity: sum(1 for result in results.values() 
-                         if result.get('severity') == severity)
+            severity.value: sum(1 for result in results.values() 
+                         if result.get('severity') == severity.value)
             for severity in CheckSeverity
         }
         
@@ -689,13 +702,14 @@ class CleaningEngine:
             # Calculate distribution statistics
             mean = data[col].mean()
             median = data[col].median()
-            
+            std = data[col].std()
             # Check for significant mean-median difference
-            if abs(mean - median) > 0.5 * std:
+            if std > 0 and abs(mean - median) > 0.5 * std:
                 issues.append({
                     'column': col,
                     'mean': float(mean),
                     'median': float(median),
+                    'std': float(std),
                     'difference': float(abs(mean - median))
                 })
         
