@@ -31,21 +31,18 @@ class Project(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     owner = relationship("User", back_populates="projects")
-    data_files = relationship("DataFile", back_populates="project")
     cleaning_results = relationship("CleaningResult", back_populates="project")
 
 class DataFile(Base):
     __tablename__ = 'data_files'
     
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    project_id = Column(UUID(as_uuid=True), ForeignKey('projects.id'), nullable=False)
     original_filename = Column(String(255), nullable=False)
     file_size = Column(Integer)
     file_type = Column(String(50))
     upload_status = Column(String(50), default='pending')
     created_at = Column(DateTime, default=datetime.utcnow)
     
-    project = relationship("Project", back_populates="data_files")
     cleaning_results = relationship("CleaningResult", back_populates="data_file")
 
 class CleaningCheck(Base):

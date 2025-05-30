@@ -6,9 +6,15 @@ from transformers import pipeline, AutoModelForSequenceClassification, AutoToken
 import spacy
 import re
 from collections import defaultdict
+import os
+import httpx
 
 class NLEngine:
     def __init__(self):
+        self.use_deepseek = os.getenv('USE_DEEPSEEK', 'false').lower() == 'true'
+        self.deepseek_api_key = os.getenv('DEEPSEEK_API_KEY')
+        self.deepseek_base_url = os.getenv('DEEPSEEK_BASE_URL')
+        self.deepseek_model = os.getenv('DEEPSEEK_MODEL', 'deepseek-chat')
         # Initialize sentiment analysis pipeline
         self.sentiment_analyzer = pipeline("sentiment-analysis")
         
@@ -31,6 +37,34 @@ class NLEngine:
             'date': r'\b\d{1,2}[-/]\d{1,2}[-/]\d{2,4}\b',
             'time': r'\b\d{1,2}:\d{2}\s*(?:AM|PM|am|pm)?\b'
         }
+    
+    async def call_deepseek(self, prompt: str) -> Dict[str, Any]:
+        """
+        Call DeepSeek API for chat/completion.
+        Args:
+            prompt: The input prompt for the model.
+        Returns:
+            Dict containing DeepSeek response or error.
+        """
+        if not self.deepseek_api_key or not self.deepseek_base_url:
+            return {"error": "DeepSeek API key or base URL not set in environment."}
+        url = f"{self.deepseek_base_url}/v1/chat/completions"
+        headers = {
+            "Authorization": f"Bearer {self.deepseek_api_key}",
+            "Content-Type": "application/json"
+        }
+        payload = {
+            "model": self.deepseek_model,
+            "messages": [{"role": "user", "content": prompt}]
+        }
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.post(url, headers=headers, json=payload, timeout=30)
+                response.raise_for_status()
+                data = response.json()
+                return {"response": data}
+        except Exception as e:
+            return {"error": str(e)}
     
     def analyze_sentiment(self, texts: Union[str, List[str]], 
                          detailed: bool = False) -> Dict[str, Any]:

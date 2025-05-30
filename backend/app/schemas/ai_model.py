@@ -3,11 +3,18 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 
 class AIModelBase(BaseModel):
-    """Base schema for AI models."""
+    """Base schema for AI models, supporting local and external providers (e.g., DeepSeek, OpenAI)."""
     name: str = Field(..., description="Model name")
     description: Optional[str] = Field(None, description="Model description")
     model_type: str = Field(..., description="Type of model (ensemble, pattern_detector, etc.)")
-    config: Dict[str, Any] = Field(default_factory=dict, description="Model configuration and hyperparameters")
+    provider: str = Field('local', description="Model provider (e.g., 'local', 'deepseek', 'openai')")
+    config: Dict[str, Any] = Field(
+        default_factory=dict,
+        description=(
+            "Model configuration and hyperparameters. "
+            "For DeepSeek, example: { 'api_key': 'sk-...', 'base_url': 'https://api.deepseek.com', 'model': 'deepseek-chat' }"
+        )
+    )
 
 class AIModelCreate(AIModelBase):
     """Schema for creating an AI model."""

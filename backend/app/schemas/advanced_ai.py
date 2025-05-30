@@ -3,8 +3,16 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 
 class PatternDetectionRequest(BaseModel):
-    """Schema for pattern detection request."""
+    """Schema for pattern detection request. Supports local and external providers (e.g., DeepSeek)."""
     data: List[List[float]] = Field(..., description="Input data array")
+    provider: Optional[str] = Field('local', description="Model provider (e.g., 'local', 'deepseek', 'openai')")
+    config: Optional[Dict[str, Any]] = Field(
+        default_factory=dict,
+        description=(
+            "Model configuration and hyperparameters. "
+            "For DeepSeek, example: { 'api_key': 'sk-...', 'base_url': 'https://api.deepseek.com', 'model': 'deepseek-chat' }"
+        )
+    )
 
 class PatternDetectionResponse(BaseModel):
     """Schema for pattern detection response."""
@@ -15,8 +23,16 @@ class PatternDetectionResponse(BaseModel):
     error: Optional[str] = Field(None, description="Error message if detection failed")
 
 class AnomalyDetectionRequest(BaseModel):
-    """Schema for anomaly detection request."""
+    """Schema for anomaly detection request. Supports local and external providers (e.g., DeepSeek)."""
     data: List[List[float]] = Field(..., description="Input data array")
+    provider: Optional[str] = Field('local', description="Model provider (e.g., 'local', 'deepseek', 'openai')")
+    config: Optional[Dict[str, Any]] = Field(
+        default_factory=dict,
+        description=(
+            "Model configuration and hyperparameters. "
+            "For DeepSeek, example: { 'api_key': 'sk-...', 'base_url': 'https://api.deepseek.com', 'model': 'deepseek-chat' }"
+        )
+    )
 
 class AnomalyDetectionResponse(BaseModel):
     """Schema for anomaly detection response."""
@@ -28,8 +44,16 @@ class AnomalyDetectionResponse(BaseModel):
     error: Optional[str] = Field(None, description="Error message if detection failed")
 
 class FeatureExtractionRequest(BaseModel):
-    """Schema for feature extraction request."""
+    """Schema for feature extraction request. Supports local and external providers (e.g., DeepSeek)."""
     data: List[List[float]] = Field(..., description="Input data array")
+    provider: Optional[str] = Field('local', description="Model provider (e.g., 'local', 'deepseek', 'openai')")
+    config: Optional[Dict[str, Any]] = Field(
+        default_factory=dict,
+        description=(
+            "Model configuration and hyperparameters. "
+            "For DeepSeek, example: { 'api_key': 'sk-...', 'base_url': 'https://api.deepseek.com', 'model': 'deepseek-chat' }"
+        )
+    )
 
 class FeatureExtractionResponse(BaseModel):
     """Schema for feature extraction response."""
@@ -39,9 +63,17 @@ class FeatureExtractionResponse(BaseModel):
     error: Optional[str] = Field(None, description="Error message if extraction failed")
 
 class ModelAdaptationRequest(BaseModel):
-    """Schema for model adaptation request."""
+    """Schema for model adaptation request. Supports local and external providers (e.g., DeepSeek)."""
     new_data: List[List[float]] = Field(..., description="New training data")
     labels: Optional[List[int]] = Field(None, description="Optional labels for supervised learning")
+    provider: Optional[str] = Field('local', description="Model provider (e.g., 'local', 'deepseek', 'openai')")
+    config: Optional[Dict[str, Any]] = Field(
+        default_factory=dict,
+        description=(
+            "Model configuration and hyperparameters. "
+            "For DeepSeek, example: { 'api_key': 'sk-...', 'base_url': 'https://api.deepseek.com', 'model': 'deepseek-chat' }"
+        )
+    )
 
 class ModelAdaptationResponse(BaseModel):
     """Schema for model adaptation response."""

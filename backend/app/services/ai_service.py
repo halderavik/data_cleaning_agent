@@ -12,15 +12,20 @@ import os
 from app.core.config import settings
 from app.models.ai_model import AIModel, ModelVersion
 from app.database import get_db
+import httpx
 
 class AIService:
     """Service for handling advanced AI capabilities."""
     
     def __init__(self):
-        self.models_dir = settings.MODELS_DIR
+        self.models_dir = os.getenv('MODEL_STORAGE_PATH', './models')
         self.scaler = StandardScaler()
         self.ensemble_model = None
         self.pattern_detector = None
+        self.deepseek_api_key = os.getenv('DEEPSEEK_API_KEY')
+        self.deepseek_base_url = os.getenv('DEEPSEEK_BASE_URL')
+        self.deepseek_model = os.getenv('DEEPSEEK_MODEL', 'deepseek-chat')
+        self.use_deepseek = os.getenv('USE_DEEPSEEK', 'false').lower() == 'true'
         self.initialize_models()
     
     def initialize_models(self):
@@ -223,4 +228,32 @@ class AIService:
                 "current_version": "unknown",
                 "metrics": {},
                 "last_updated": datetime.utcnow()
-            } 
+            }
+    
+    async def call_deepseek(self, prompt: str) -> Dict[str, Any]:
+        """
+        Call DeepSeek API for chat/completion.
+        Args:
+            prompt: The input prompt for the model.
+        Returns:
+            Dict containing DeepSeek response or error.
+        """
+        if not self.deepseek_api_key or not self.deepseek_base_url:
+            return {"error": "DeepSeek API key or base URL not set in environment."}
+        url = f"{self.deepseek_base_url}/v1/chat/completions"
+        headers = {
+            "Authorization": f"Bearer {self.deepseek_api_key}",
+            "Content-Type": "application/json"
+        }
+        payload = {
+            "model": self.deepseek_model,
+            "messages": [{"role": "user", "content": prompt}]
+        }
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.post(url, headers=headers, json=payload, timeout=30)
+                response.raise_for_status()
+                data = response.json()
+                return {"response": data}
+        except Exception as e:
+            return {"error": str(e)} 
